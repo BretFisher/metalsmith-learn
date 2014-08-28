@@ -1,18 +1,28 @@
-var Metalsmith = require('metalsmith'),
-    markdown   = require('metalsmith-markdown'),
-    templates  = require('metalsmith-templates'),
-    collections= require('metalsmith-collections'),
-    permalinks = require('metalsmith-permalinks'),
-    Handlebars = require('handlebars'),
-    fs         = require('fs');
+var Metalsmith  = require('metalsmith'),
+    markdown    = require('metalsmith-markdown'),
+    templates   = require('metalsmith-templates'),
+    collections = require('metalsmith-collections'),
+    permalinks  = require('metalsmith-permalinks'),
+    drafts      = require('metalsmith-drafts'),
+    copy        = require('metalsmith-copy'),
+    Handlebars  = require('handlebars'),
+    fs          = require('fs');
 
 Metalsmith(__dirname)
+  .use(drafts()) // add draft: true to front-matter in .md files
+  .use(copy({
+    pattern: 'CNAMESRC', // relative to the working directory
+    // extension: false
+    transform: function (file) {
+      return 'CNAME';
+    }
+   }))
   .use(collections({
-    pages: {
-      pattern: 'content/pages/*.md'
-     },
+    // p: {
+    //   pattern: 'pages/*.md'
+    //  },
     posts: {
-      pattern: 'content/posts/*.md',
+      pattern: 'posts/*.md',
       sortBy: 'date',
       reverse: true
      }
@@ -25,5 +35,5 @@ Metalsmith(__dirname)
   .destination('./build')
   .build()
 
-  Handlebars.registerPartial('header', fs.readFileSync(__dirname + '/templates/partials/header.handlebars').toString());
-  Handlebars.registerPartial('footer', fs.readFileSync(__dirname + '/templates/partials/footer.handlebars').toString());
+  Handlebars.registerPartial('header', fs.readFileSync(__dirname + '/templates/header.handlebars').toString());
+  Handlebars.registerPartial('footer', fs.readFileSync(__dirname + '/templates/footer.handlebars').toString());
