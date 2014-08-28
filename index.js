@@ -10,13 +10,6 @@ var Metalsmith  = require('metalsmith'),
 
 Metalsmith(__dirname)
   .use(drafts()) // add draft: true to front-matter in .md files
-  .use(copy({
-    pattern: 'CNAMESRC', // relative to the working directory
-    // extension: false
-    transform: function (file) {
-      return 'CNAME';
-    }
-   }))
   .use(collections({
     // p: {
     //   pattern: 'pages/*.md'
@@ -32,8 +25,16 @@ Metalsmith(__dirname)
     pattern: ':collection/:title'
    }))
   .use(templates('handlebars'))
+  .use(copy({
+    pattern: 'CNAMESRC',
+    // extension: false
+    transform: function (file) {
+      return 'CNAME';
+    }
+   }))
   .destination('./build')
   .build()
+
 
   Handlebars.registerPartial('header', fs.readFileSync(__dirname + '/templates/header.handlebars').toString());
   Handlebars.registerPartial('footer', fs.readFileSync(__dirname + '/templates/footer.handlebars').toString());
