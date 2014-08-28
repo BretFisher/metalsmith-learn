@@ -30,7 +30,8 @@ Metalsmith(__dirname)
     // extension: false
     transform: function (file) {
       return 'CNAME';
-    }
+    },
+    move: true
    }))
   .destination('./build')
   .build()
