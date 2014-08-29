@@ -8,6 +8,16 @@ var Metalsmith  = require('metalsmith'),
     Handlebars  = require('handlebars'),
     fs          = require('fs');
 
+
+var cname = function(from, to){
+    return function(files, metalsmith, done){
+        files[to] = files[from];
+        delete files[from];
+        done();
+    };
+};
+
+
 Metalsmith(__dirname)
   .use(drafts()) // add draft: true to front-matter in .md files
   .use(collections({
@@ -25,14 +35,7 @@ Metalsmith(__dirname)
     pattern: ':collection/:title'
    }))
   .use(templates('handlebars'))
-  .use(copy({
-    pattern: 'CNAMESRC',
-    // extension: false
-    transform: function (file) {
-      return 'CNAME';
-    },
-    move: true
-   }))
+  .use(cname('CNAMESRC', 'CNAME'))
   .destination('./build')
   .build()
 
